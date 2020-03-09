@@ -1,8 +1,8 @@
 {
-	"name": "pwa-server",
+	"name": "cross-pwgame-server",
 	"version": "1.0.0",
 	"main": "index.js",
-	"author": "CrackyStudio",
+	"author": "Pierre Hérissé",
 	"license": "MIT",
 	"scripts": {
 		"dev": "yarn nodemon"
