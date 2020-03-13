@@ -1,5 +1,6 @@
-const HTMLWebpackPlugin = require("html-webpack-plugin");
-const path = require("path");
+const HTMLWebpackPlugin = require("html-webpack-plugin")
+const path = require("path")
+var InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin')
 
 module.exports = {
 	entry: {
@@ -31,8 +32,13 @@ module.exports = {
 	},
 	plugins: [
 		new HTMLWebpackPlugin({
-			template: "./src/index.html",
+			template: "./public/index.html",
 			filename: "./index.html"
-		})
+		}),
+		new InterpolateHtmlPlugin(HTMLWebpackPlugin, {
+      PUBLIC_URL: '/public',
+      // You can pass any key-value pairs, this was just an example.
+      // WHATEVER: 42 will replace %WHATEVER% with 42 in index.html.
+    })
 	]
-};
+}
