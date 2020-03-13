@@ -10,31 +10,41 @@ const PORT = process.env.PORT
 const app = express()
 const server = createServer(app)
 const io = socketIO(server)
-let players = []
+let players: Array<any> = []
 
 app.get("/", (_, res) => {
 	res.send("hello fellows")
 })
 
-io.on("connection", socket => {
-	console.log("new connection")
-	socket.emit("event::hello")
+/*====================================*/
+/*====== HANDLE CONNECTIONS ==========*/
+/*====================================*/
+io.on("connection", (socket: socketIO.Socket) => {
+	console.log(`[CLIENT]::connection=${socket.id}`)
+	socket.emit("event::handshake")
 
-	socket.on("event::initialize", payload => {
-		if (players.length >= 2) {
-			socket.emit("event::gameFull")
-			return
-		}
-
-		players.push(payload)
+	socket.on("event::initMagicNumber", payload => {
 		console.log("new name received: ", payload.nickname)
-		console.log("players : ", players)
+		players.push(payload)
 
-		if (players.length === 2) {
-			io.emit("event::gameStarted")
-		}
+		if (players.length >= 2) return socket.emit("event::gameFull")
+	})
 
-		io.emit("event::getPlayers", players)
+	socket.on("event::initQuickWord", payload => {
+		console.log("[QuickWord] Connection requested")
+	})
+
+	socket.on("event::initWordAndFurious", payload => {
+		console.log("[WordAndFurious] Connection requested")
+	})
+
+	/*====================================*/
+	/*======= CLOSE CONNECTIONS ==========*/
+	/*====================================*/
+	socket.on("close", (socket: socketIO.Socket) => {
+		//socket.disconnect()
+		players = []
+		console.log('connection closed')
 	})
 })
 

@@ -5,12 +5,13 @@
 	"author": "Pierre Hérissé",
 	"license": "MIT",
 	"scripts": {
-		"dev": "yarn nodemon"
+		"dev": "kill $(lsof -t -i:3000) && yarn nodemon src/server"
 	},
 	"dependencies": {
 		"@types/socket.io": "^2.1.4",
 		"express": "^4.17.1",
-		"socket.io": "^2.3.0"
+		"socket.io": "^2.3.0",
+		"ts-node": "^8.6.2"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.8.7",
