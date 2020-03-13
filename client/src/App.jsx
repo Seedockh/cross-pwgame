@@ -1,21 +1,7 @@
-import React, { useState, useEffect } from "react";
-import socketIO from "socket.io-client";
-import AskNickname from "./components/AskNickname";
-import MagicNumber from "./components/MagicNumber";
+import React, { useState, useEffect } from "react"
+import Dashboard from "./components/Dashboard"
 
 const App = () => {
-	const [isGameStarted, setGameStarted] = useState(false);
-	const io = socketIO("http://localhost:3000");
-
-	io.on("event::hello", () => {
-		console.log("handshake");
-	});
-
-	io.on("event::gameStarted", () => {
-		console.log("game started");
-		setGameStarted(true);
-	});
-
 	return (
 		<section className="hero is-fullheight is-light">
 			<div className="hero-head">
@@ -33,7 +19,7 @@ const App = () => {
 			<div className="hero-body">
 				<div className="container">
 					<header className="bd-index-header">
-						{!isGameStarted ? <AskNickname io={io} /> : <MagicNumber />}
+						<Dashboard />
 					</header>
 				</div>
 			</div>
