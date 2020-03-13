@@ -5,7 +5,7 @@
 	"author": "Pierre Hérissé",
 	"license": "MIT",
 	"scripts": {
-		"dev": "kill $(lsof -t -i:3000) && yarn nodemon src/server"
+		"dev": "yarn nodemon src/server"
 	},
 	"dependencies": {
 		"@types/socket.io": "^2.1.4",
