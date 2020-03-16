@@ -10,3 +10,7 @@ interface Game {
   name: string,
   maxPlayers: integer,
 }
+
+interface Queue {
+  queue: Array<Player>
+}

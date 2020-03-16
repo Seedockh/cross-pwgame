@@ -19,6 +19,7 @@ module.exports = {
   ],
   plugins: ['jest', 'prettier'],
   rules: {
+    'no-mixed-spaces-and-tabs': ['warn', 'smart-tabs'],
     'prettier/prettier': ['error', require('./prettier.config.js')],
     // Typescript stuff
     '@typescript-eslint/no-inferrable-types': 'off',
