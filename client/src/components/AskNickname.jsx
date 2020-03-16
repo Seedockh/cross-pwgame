@@ -1,40 +1,36 @@
-import React, { useState, useEffect } from "react"
+import React, { useEffect } from "react"
 import socketIO from "socket.io-client"
+import useInput from '../hooks/useInput'
+import { useStateValue } from '../hooks/state'
 
 const AskNickname = ({ io, game }) => {
-	const [nickname, setNickname] = useState("")
-	const [playerOne, setPlayerOne] = useState(null)
-	const [playerTwo, setPlayerTwo] = useState(null)
-	const [players, setPlayers] = useState({})
+	const nickname = useInput('')
+	const [{ playerOne, playerTwo, players }, dispatch] = useStateValue()
 
 	useEffect(() => {
 		if (playerOne && playerTwo)
-			setPlayers({
+			dispatch({type: 'setPlayers', players: {
 				playerOne: playerOne,
 				playerTwo: playerTwo
-			})
+			}})
 	}, [playerOne, playerTwo])
 
-	const handleNickname = event => {
-		setNickname(event.target.value)
-	}
-
 	const sendPlayerOne = () => {
-		console.log("Setting player 1 !")
-		setPlayerOne({ name: nickname })
-		io.emit("event::init" + game, { nickname })
+		console.log(`Setting player 1 : ${nickname.value}!`)
+		dispatch({type: 'setPlayerOne', name: nickname.value})
+		io.emit("event::init" + game, nickname)
 	}
 
 	const sendPlayerTwo = () => {
 		console.log("Setting player 2 !")
-		setPlayerTwo({ name: nickname })
-		io.emit("event::init" + game, { nickname })
+		dispatch({type: 'setPlayerTwo', name: nickname.value})
+		io.emit("event::init" + game, nickname.value)
 	}
 
 	return (
 		<div className="field">
 			<div className="control" style={{marginBottom: '1em'}}>
-				<input className="input is-block is-large is-fullwidth" placeholder="Enter your nickname" onChange={handleNickname} value={nickname} />
+				<input className="input is-block is-large is-fullwidth" placeholder="Enter your nickname" {...nickname}/>
 			</div>
 			<div className="control" style={{marginBottom: '1em'}}>
 				{ !playerOne && !playerTwo &&
