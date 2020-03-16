@@ -1,21 +1,25 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { StateProvider } from './hooks/state'
+import socketIO from "socket.io-client"
 import Dashboard from "./components/Dashboard"
 
 const App = () => {
 	const initialState = {
+		io: socketIO("http://localhost:3000"),
 		playerOne: null,
 		playerTwo: null,
 		players: [],
 		playersReady: false,
+		isPlayerWaiting: false,
 	}
 
 	const reducer = (state, action) => {
 		switch (action.type) {
-			case 'setPlayerOne': return ({ ...state, name: action.name })
-			case 'setPlayerTwo': return ({ ...state, name: action.name })
+			case 'setPlayerOne': return ({ ...state, playerOne: action.playerOne })
+			case 'setPlayerTwo': return ({ ...state, playerTwo: action.playerTwo })
 			case 'setPlayers': return ({ ...state, players: action.players })
 			case 'setPlayersReady': return ({ ...state, ready: action.ready })
+			case 'setIsPlayerWaiting': return ({ ...state, isWaiting: action.isWaiting })
 		}
 	}
 

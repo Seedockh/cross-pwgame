@@ -1,14 +1,5 @@
 {
-	"signal": "SIGUSR2",
-	"stdout": true,
-	"runOnChangeOnly": false,
-	 "ignore": [
-    ".git",
-    "node_modules/**/node_modules"
-  ],
-	"execMap": {
-		"js": "babel-node --extensions \".ts\" src/server"
-	},
   "watch": ["src"],
-  "ext": "ts,json"
+  "ext": "ts",
+  "exec": "babel-node --extensions \".ts\" src/main"
 }

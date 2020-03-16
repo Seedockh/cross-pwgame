@@ -3,27 +3,41 @@ import socketIO from "socket.io-client"
 import useInput from '../hooks/useInput'
 import { useStateValue } from '../hooks/state'
 
-const AskNickname = ({ io, game }) => {
+const AskNickname = ({ game }) => {
 	const nickname = useInput('')
-	const [{ playerOne, playerTwo, players }, dispatch] = useStateValue()
+	const [{ io, playerOne, playerTwo, players, isPlayerWaiting }, dispatch] = useStateValue()
 
 	useEffect(() => {
+		console.log(`
+			player1 : ${playerOne}
+			player2 : ${playerTwo}
+			players: ${players}`)
 		if (playerOne && playerTwo)
-			dispatch({type: 'setPlayers', players: {
-				playerOne: playerOne,
-				playerTwo: playerTwo
-			}})
+			dispatch(
+				{ type: 'setPlayers', players: {
+						playerOne: playerOne,
+						playerTwo: playerTwo
+					}
+				},
+				{ type: 'isPlayerWaiting', isWaiting: false }
+			)
 	}, [playerOne, playerTwo])
 
 	const sendPlayerOne = () => {
-		console.log(`Setting player 1 : ${nickname.value}!`)
-		dispatch({type: 'setPlayerOne', name: nickname.value})
+		console.log(`Setting player 1`)
+		dispatch(
+			{ type: 'setPlayerOne', playerOne: nickname.value },
+			{ type: 'isPlayerWaiting', isWaiting: true }
+		)
 		io.emit("event::init" + game, nickname)
 	}
 
 	const sendPlayerTwo = () => {
 		console.log("Setting player 2 !")
-		dispatch({type: 'setPlayerTwo', name: nickname.value})
+		dispatch(
+			{ type: 'setPlayerTwo', playerTwo: nickname.value },
+			{ type: 'isPlayerWaiting', isWaiting: true }
+		)
 		io.emit("event::init" + game, nickname.value)
 	}
 
@@ -33,11 +47,11 @@ const AskNickname = ({ io, game }) => {
 				<input className="input is-block is-large is-fullwidth" placeholder="Enter your nickname" {...nickname}/>
 			</div>
 			<div className="control" style={{marginBottom: '1em'}}>
-				{ !playerOne && !playerTwo &&
+				{!playerOne && !playerTwo &&
 					<a className="button is-large is-fullwidth is-info" onClick={sendPlayerOne}>Send</a> }
-				{ (!playerOne && playerTwo) || (!playerOne && playerTwo) &&
+				{playerOne && !playerTwo &&
 					<a className="button is-large is-fullwidth is-info" onClick={sendPlayerTwo}>Send</a> }
-				{ playerOne && !playerTwo && <a className="button is-large is-fullwidth is-info is-loading">Send</a>
+				{(playerOne || playerTwo) && isPlayerWaiting && <a className="button is-large is-fullwidth is-info is-loading">Send</a>
 				}
 			</div>
 		</div>
