@@ -7,12 +7,12 @@ import { config } from "dotenv"
 
 config()
 
-process.on('SIGUSR2', function () {
+process.on('SIGUSR2', async () => {
 	console.log('QUITTING NODEMON')
+  await killPort(3000, 'tcp')
+	console.log('=== PORT 3000 KILLED ===')
 	nodemon.emit('quit')
 	process.exit()
-	killPort(3000, 'tcp')
-		.then('=== PORT 3000 KILLED ===').catch('=== ERROR IN KILLING PORT ====')
 })
 
 const PORT = process.env.PORT
