@@ -13,8 +13,6 @@ process.on('SIGUSR2', function () {
 	process.exit()
 	killPort(3000, 'tcp')
 		.then('=== PORT 3000 KILLED ===').catch('=== ERROR IN KILLING PORT ====')
-  // do some "stuff" then when you're ready (or not):
-  nodemon.emit('restart');
 })
 
 const PORT = process.env.PORT
