@@ -1,8 +1,14 @@
 {
-	"watch": ["src"],
-	"ext": "ts",
+	"signal": "SIGUSR2",
+	"stdout": true,
+	"runOnChangeOnly": false,
+	 "ignore": [
+    ".git",
+    "node_modules/**/node_modules"
+  ],
 	"execMap": {
-		"babel": "babel-node"
+		"js": "babel-node --extensions \".ts\" src/server"
 	},
-	"delay": "500"
+  "watch": ["src"],
+  "ext": "ts,json"
 }

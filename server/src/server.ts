@@ -1,16 +1,29 @@
 import express from "express"
 import socketIO from "socket.io"
+import nodemon from "nodemon"
+import killPort from "kill-port"
 import { createServer } from "http"
 import { config } from "dotenv"
 
 config()
 
+process.on('SIGUSR2', function () {
+	console.log('QUITTING NODEMON')
+	nodemon.emit('quit')
+	process.exit()
+	killPort(3000, 'tcp')
+		.then('=== PORT 3000 KILLED ===').catch('=== ERROR IN KILLING PORT ====')
+  // do some "stuff" then when you're ready (or not):
+  nodemon.emit('restart');
+})
+
 const PORT = process.env.PORT
+const LIMIT_PLAYERS_PER_GAME = 2
 
 const app = express()
 const server = createServer(app)
 const io = socketIO(server)
-let players: Array<any> = []
+let players: Array<Player> = []
 
 app.get("/", (_, res) => {
 	res.send("hello fellows")
@@ -24,10 +37,13 @@ io.on("connection", (socket: socketIO.Socket) => {
 	socket.emit("event::handshake")
 
 	socket.on("event::initMagicNumber", payload => {
-		console.log("new name received: ", payload.nickname)
+		console.log("new name received: ", payload)
 		players.push(payload)
 
-		if (players.length >= 2) return socket.emit("event::gameFull")
+		if (players.length >= LIMIT_PLAYERS_PER_GAME)
+			return socket.emit("event::gameFull")
+
+		return socket.emit("event::newPlayer", players)
 	})
 
 	socket.on("event::initQuickWord", payload => {
@@ -48,6 +64,7 @@ io.on("connection", (socket: socketIO.Socket) => {
 	})
 })
 
+
 server.listen(PORT, () => {
-	console.log("Server ready at ...")
+	console.log("Server ready at http://localhost:3000/")
 })
