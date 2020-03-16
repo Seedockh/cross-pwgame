@@ -1,20 +1,22 @@
-import React, { useState } from "react"
+import React from "react"
 import socketIO from "socket.io-client"
+import { useStateValue } from "../hooks/state"
 import AskNickname from "./AskNickname"
 
 const MagicNumber = ({ io }) => {
-  const [players, setPlayers] = useState({})
-  const [playersReady, setPlayersReady] = useState(false)
+	const [{ playerOne, playerTwo, players, playersReady }, dispatch] = useStateValue()
 
 	io.on("event::handshake", () => {
-		console.log(`
-      Server connection ...
-      ---> OK`)
+		console.log('Connected to server')
 	});
+
+  io.on("event::newPlayer", data => {
+    dispatch({ type: 'setPlayers', data })
+  })
 
   io.on("event::gameFull", () => {
     console.log("MAGICNUMBER ready !")
-    setPlayersReady(true)
+    dispatch({ type: 'setPlayersReady', ready: true })
   })
 
   return (
