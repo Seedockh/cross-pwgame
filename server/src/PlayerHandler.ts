@@ -1,3 +1,6 @@
+import chalk from 'chalk'
+const logServ = chalk.bold.green
+
 class PlayerHandler {
 	players: Array<Player> = []
 
@@ -6,7 +9,9 @@ class PlayerHandler {
 	/*----------------------------------------------------*/
 	createPlayer(player: Partial<Player>): Player {
 		if (this.getPlayer(player.socket))
-			console.log(`[SERVER] Warning: ${player.nickname} already exists`)
+			console.log(
+				logServ(`[SERVER] Warning: ${player.nickname} already exists`),
+			)
 		else this.players.push(player)
 
 		return this.getPlayer(player.socket)
