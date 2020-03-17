@@ -19,17 +19,20 @@ const AskNickname = () => {
 	/** * receive answer from server **/
 	/*--------------------------------*/
 	useEffect(() => {
-		io.on('event::handshake', () => {
+		io.on('handshake', () => {
 			setIsServerConnected(true)
 			console.log('Connected to the server !')
 		})
 	}, [io])
 
-	/*-------------------------------*/
-	/** * send new player to server **/
-	/*-------------------------------*/
+	/*---------------------------------*/
+	/** * send a new player to server **/
+	/*---------------------------------*/
 	const sendPlayer = () => {
-		console.log(`New player`)
+		io.emit('player::new', {
+			nickname: nickname.value,
+			socket: io.id
+		})
 	}
 
 	/*---------------*/
