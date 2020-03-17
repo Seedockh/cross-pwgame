@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect } from 'react'
 import useInput from '../hooks/useInput'
 import { useStateValue } from '../hooks/state'
 import Dashboard from './Dashboard'
@@ -58,7 +58,6 @@ const AskNickname = () => {
 				currentPlayer: player
 			})
 			localStorage.setItem('player', JSON.stringify(player))
-			console.log(`Welcome on PWA-Games, ${player.nickname}`)
 		}
 	})
 

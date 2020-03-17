@@ -8,23 +8,46 @@ const Dashboard = () => {
 	const [selectedGame, setSelectedGame] = useState(null)
 	const [{ io, totalPlayers, currentPlayer }, dispatch] = useStateValue()
 
+	/*-------------------------------------*/
+	/** * get the total players on server **/
+	/*-------------------------------------*/
 	io.on('players::count', total => {
 		dispatch({ type: 'setTotalPlayers',	totalPlayers: total })
 	})
 
+	/*-------------------------------*/
+	/** * launch game : MagicNumber **/
+	/*-------------------------------*/
   const startMagicNumber = () => {
 		setGameSelected(true)
 		setSelectedGame(<MagicNumber io={io}/>)
+
+		/** @queue_for_magic_number **/
+		io.emit('game::queue-magicnumber', currentPlayer)
 	}
 
+	/*-----------------------------*/
+	/** * launch game : QuickWord **/
+	/*-----------------------------*/
   const startQuickWord = () => alert('Quick Word')
+
+	/*------------------------------------*/
+	/** * launch game : Word and Furious **/
+	/*------------------------------------*/
   const startWordAndFurious = () => alert('Word & Furious')
 
+	/*------------------------------*/
+	/** * logout from localStorage **/
+	/*------------------------------*/
 	const logout = () => {
 		localStorage.removeItem('player')
-		console.log(currentPlayer)
-		dispatch({ type: 'setCurrentPlayer', currentPlayer: undefined })
-		console.log(currentPlayer)
+		dispatch({ type: 'setCurrentPlayer', currentPlayer: null })
+	}
+
+	/*---------------------*/
+	/** * ragequit button **/
+	/*---------------------*/
+	const resetGames = () => {
 		setGameSelected(false)
 		setSelectedGame(null)
 	}

@@ -45,7 +45,10 @@ class GameHandler {
 	public enqueuePlayer(player: Player, game: string): Queue {
 		if (this.getGame(game)) {
 			const handledQueue = this.getQueue(game)
-			if (handledQueue && !this.checkIfPlayerAlreadyQueued(player.socket, game)) {
+			if (
+				handledQueue &&
+				!this.checkIfPlayerAlreadyQueued(player.socket, game)
+			) {
 				handledQueue.players.push(player)
 				console.log(
 					logCli(`[CLIENT] ${player.nickname} added to ${game} queue`),
