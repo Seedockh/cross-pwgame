@@ -47,7 +47,8 @@ class GameHandler {
 			const handledQueue = this.getQueue(game)
 			if (
 				handledQueue &&
-				!this.checkIfPlayerAlreadyQueued(player.socket, game)
+				!this.checkIfPlayerAlreadyQueued(player.socket, game) &&
+				handledQueue.players.length <= this.getGame(game).maxPlayers
 			) {
 				handledQueue.players.push(player)
 				console.log(
@@ -58,9 +59,8 @@ class GameHandler {
 				const newQueue = this.createQueue(game)
 				newQueue.game = game
 				newQueue.players.push(player)
-				console.log(
-					logCli(`[CLIENT] ${player.nickname} added to ${game} queue`),
-				)
+				console.log(logServ(`[SERVER] New queue created for ${game}`))
+				console.log(logCli(`[CLIENT] ${player.nickname} added to ${game} queue`))
 				return newQueue
 			}
 		}

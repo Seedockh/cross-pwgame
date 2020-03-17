@@ -50,6 +50,7 @@ const Dashboard = () => {
 	const resetGames = () => {
 		setGameSelected(false)
 		setSelectedGame(null)
+		io.emit('game::quit-queue', currentPlayer)
 	}
 
 	return (
@@ -57,7 +58,7 @@ const Dashboard = () => {
 			{isGameSelected &&
 				<>
 					{selectedGame}
-					<button className="button is-large is-fullwidth" onClick={resetGames}>Back</button>
+					<button className="button is-large is-fullwidth is-danger" onClick={resetGames}>Quit</button>
 				</>
 			}
 			{! isGameSelected &&

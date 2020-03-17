@@ -54,16 +54,24 @@ io.on('connection', (socket: Socket) => {
 	/** * add player to MagicNumber queue **/
 	/*-------------------------------------*/
 	socket.on('game::queue-magicnumber', (player: Player) => {
-		console.log(player)
 		if (player.currentGame === 'Magic Number') {
 			const enqueuing = gameHandler.enqueuePlayer(player, 'Magic Number')
 
 			if (enqueuing.players.length > 1) gameHandler.dispatchDuo('Magic Number')
-			else socket.emit('game::wait-magicnumber')
+
+			socket.emit('game::players-magicnumber', enqueuing.players)
 			console.log(logServ(JSON.stringify(enqueuing, null, 2)))
 		}
 	})
 
+	socket.on('game::quit-queue', (player: Player) => {
+		if (player.currentGame === 'Magic Number') {
+			const dequeue = gameHandler.dequeuePlayer(player, 'Magic Number')
+			console.log(dequeue)
+		}
+	})
+
+	/** @send_total_players_to_client **/
 	socket.emit('players::count', playerHandler.players.length)
 })
 
