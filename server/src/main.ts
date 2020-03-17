@@ -57,17 +57,42 @@ io.on('connection', (socket: Socket) => {
 		if (player.currentGame === 'Magic Number') {
 			const enqueuing = gameHandler.enqueuePlayer(player, 'Magic Number')
 
-			if (enqueuing.players.length > 1) gameHandler.dispatchDuo('Magic Number')
+			if (
+				enqueuing.players.length >=
+				gameHandler.getGame(enqueuing.game).maxPlayers
+			) {
+				socket.emit('game::ready-magicnumber', enqueuing)
+			}
 
 			socket.emit('game::players-magicnumber', enqueuing.players)
 			console.log(logServ(JSON.stringify(enqueuing, null, 2)))
 		}
 	})
 
+	/*--------------------------------------*/
+	/** * send MagicNumber queue to client **/
+	/*--------------------------------------*/
+	socket.on('game::get-magicnumber-queue', (player: Player) => {
+		return player.currentGame
+			? socket.emit(
+					'game::send-magicnumber-queue',
+					gameHandler.getQueue(player.currentGame),
+			  )
+			: false
+	})
+
+	/*------------------------------------------*/
+	/** * remove player from MagicNumber queue **/
+	/*------------------------------------------*/
 	socket.on('game::quit-queue', (player: Player) => {
 		if (player.currentGame === 'Magic Number') {
-			const dequeue = gameHandler.dequeuePlayer(player, 'Magic Number')
-			console.log(dequeue)
+			const dequeue = gameHandler.dequeuePlayer(player)
+			console.log(
+				logCli(
+					`[CLIENT] ${player.nickname} removed from ${dequeue.game} queue`,
+				),
+			)
+			console.log(logServ(JSON.stringify(dequeue, null, 2)))
 		}
 	})
 

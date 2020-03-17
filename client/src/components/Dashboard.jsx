@@ -12,6 +12,7 @@ const Dashboard = () => {
 	/** * get the total players on server **/
 	/*-------------------------------------*/
 	io.on('players::count', total => {
+		console.log('new total of players received !')
 		dispatch({ type: 'setTotalPlayers',	totalPlayers: total })
 	})
 

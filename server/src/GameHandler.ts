@@ -10,6 +10,10 @@ class GameHandler {
 		{ name: 'Word And Furious', maxPlayers: 2 },
 	]
 
+	//=======================================================||
+	//================= QUEUES METHODS ======================||
+	//=======================================================||
+
 	/*---------------------------------------------------*/
 	/** * create a queue and add it to handler instance **/
 	/*---------------------------------------------------*/
@@ -29,14 +33,6 @@ class GameHandler {
 	public getQueue(gameName: string): Queue | boolean {
 		const queue = this.queues.filter(queue => queue.game === gameName)
 		return queue.length === 1 ? queue[0] : false
-	}
-
-	/*---------------------------------*/
-	/** * get specific game if exists **/
-	/*---------------------------------*/
-	public getGame(name: string): Game | boolean {
-		const result = this.games.filter(game => game.name === name)
-		return result.length === 1 ? result[0] : false
 	}
 
 	/*-----------------------------*/
@@ -60,10 +56,25 @@ class GameHandler {
 				newQueue.game = game
 				newQueue.players.push(player)
 				console.log(logServ(`[SERVER] New queue created for ${game}`))
-				console.log(logCli(`[CLIENT] ${player.nickname} added to ${game} queue`))
+				console.log(
+					logCli(`[CLIENT] ${player.nickname} added to ${game} queue`),
+				)
 				return newQueue
 			}
 		}
+	}
+
+	/*--------------------------------*/
+	/** * remove a player from queue **/
+	/*--------------------------------*/
+	public dequeuePlayer(player: Player): Queue {
+		const queue = this.getQueue(player.currentGame)
+		if (queue)
+			queue.players = queue.players.filter(
+				queuedPlayer => queuedPlayer.socket !== player.socket,
+			)
+
+		return queue
 	}
 
 	/*--------------------------------------*/
@@ -74,6 +85,18 @@ class GameHandler {
 			.length >= 1
 			? true
 			: false
+	}
+
+	//======================================================||
+	//================= GAMES METHODS ======================||
+	//======================================================||
+
+	/*---------------------------------*/
+	/** * get specific game if exists **/
+	/*---------------------------------*/
+	public getGame(name: string): Game | boolean {
+		const result = this.games.filter(game => game.name === name)
+		return result.length === 1 ? result[0] : false
 	}
 
 	/*-------------------------------------*/

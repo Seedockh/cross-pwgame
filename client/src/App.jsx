@@ -12,6 +12,7 @@ const App = () => {
 		totalPlayers: 0,
 		currentPlayer: localStorage.getItem('player') || null,
 		isPlayerWaiting: false,
+		magicNumberQueue: null,
 	}
 
 	/*----------------------------------*/
@@ -27,6 +28,8 @@ const App = () => {
 				return ({ ...state, isWaiting: action.isWaiting })
 			case 'setCurrentPlayer':
 				return ({ ...state, currentPlayer: action.currentPlayer })
+			case 'setMagicNumberQueue':
+				return ({ ...state, magicNumberQueue: action.magicNumberQueue })
 		}
 	}
 
