@@ -11,4 +11,5 @@ module.exports = {
   trailingComma: 'all',
   // include parentheses around a sole arrow function parameter.
   arrowParens: 'avoid',
+  allowTemplateLiterals: true,
 }

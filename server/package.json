@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "yarn nodemon",
     "check": "yarn tsc",
-    "lint": "yarn eslint 'src/**/*.ts'"
+    "lint": "yarn eslint 'src/**/*.ts' --fix"
   },
   "dependencies": {
     "dotenv": "^8.2.0",

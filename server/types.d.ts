@@ -1,9 +1,9 @@
 import { Socket } from 'socket.io'
 
 interface Player {
-  name: string,
-  currentGame: Game|null,
-  socket: Socket|null,
+  nickname: string,
+  currentGame: Game | null,
+  socket: string | null,
 }
 
 interface Game {
@@ -12,5 +12,6 @@ interface Game {
 }
 
 interface Queue {
-  queue: Array<Player>
+  game: string,
+  players: Array<Player>,
 }
