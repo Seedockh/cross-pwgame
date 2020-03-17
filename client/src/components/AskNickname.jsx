@@ -1,18 +1,28 @@
 import React, { useState, useEffect } from "react"
-import socketIO from "socket.io-client"
 import useInput from '../hooks/useInput'
 import { useStateValue } from '../hooks/state'
+import Dashboard from './Dashboard'
 
 const AskNickname = () => {
 	const nickname = useInput('')
 	const [isServerConnected, setIsServerConnected] = useState(false)
-	const [{ io, players, isPlayerWaiting }, dispatch] = useStateValue()
+	const [isPlayerCreated, setIsPlayerCreated] = useState(false)
+	const [{ io, totalPlayers, currentPlayer }, dispatch] = useStateValue()
 
 	/*---------------------------------------*/
 	/** * send connection request to server **/
 	/*---------------------------------------*/
 	useEffect(() => {
 		io.emit("connection")
+
+		const storedPlayer = localStorage.getItem('player')
+		if (storedPlayer) {
+			dispatch({
+				type: 'setCurrentPlayer',
+				currentPlayer: JSON.parse(storedPlayer)
+			})
+			setIsPlayerCreated(true)
+		}
 	}, [])
 
 	/*--------------------------------*/
@@ -35,6 +45,23 @@ const AskNickname = () => {
 		})
 	}
 
+	/*----------------------------------------*/
+	/** *   listen server to confirm player  **/
+	/*																				*/
+	/** @TODO_Handle_error_if_player_is_false */
+	/*----------------------------------------*/
+	io.on('player::created', player => {
+		if (player) {
+			setIsPlayerCreated(true)
+			dispatch({
+				type: 'setCurrentPlayer',
+				currentPlayer: player
+			})
+			localStorage.setItem('player', JSON.stringify(player))
+			console.log(`Welcome on PWA-Games, ${player.nickname}`)
+		}
+	})
+
 	/*---------------*/
 	/** * rendering **/
 	/*---------------*/
@@ -45,27 +72,40 @@ const AskNickname = () => {
 			}
 			{isServerConnected &&
 				<>
-					<div className="control" style={{marginBottom: '1em'}}>
-						<input className="input is-block is-large is-fullwidth" placeholder="Enter your nickname" {...nickname}/>
-					</div>
-					<div className="control" style={{marginBottom: '1em'}}>
-						{!isPlayerWaiting &&
-							<a className="button is-large is-fullwidth is-info" onClick={sendPlayer}>
-								Send
-							</a>
-						}
-						{isPlayerWaiting &&
-							<a className="button is-large is-fullwidth is-info is-loading">
-								Send
-							</a>
-						}
-					</div>
-					<div className="section">
-						<div className="box has-text-centered has-text-info">
-							<h6 className="title is-6">YOUR CONNECTION ID :</h6>
-							<p>{io.id}</p>
+					{isPlayerCreated && currentPlayer &&
+						<Dashboard />
+					}
+					{!currentPlayer &&
+						<>
+							<div className="control" style={{marginBottom: '1em'}}>
+								<input className="input is-block is-large is-fullwidth" placeholder="Enter your nickname" {...nickname}/>
+							</div>
+							<div className="control" style={{marginBottom: '1em'}}>
+								<a className="button is-large is-fullwidth is-info" onClick={sendPlayer}>
+									Send
+								</a>
+							</div>
+						</>
+					}
+					{currentPlayer &&
+						<div className="section">
+							<div className="box has-text-centered has-text-info">
+								{totalPlayers > 0 &&
+									<p className="title is-4">{totalPlayers} player(s) on server</p>
+								}
+								<p className="has-text-weight-semibold">
+									ID : {currentPlayer.socket}
+								</p>
+								<p className="has-text-weight-semibold">
+									nickname : {currentPlayer.nickname}
+								</p>
+								<p className="has-text-weight-semibold">
+									{currentPlayer.game !== undefined ?
+										`playing:  ${currentPlayer.game}` : ''}
+								</p>
+							</div>
 						</div>
-					</div>
+					}
 				</>
 			}
 		</div>

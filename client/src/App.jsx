@@ -1,22 +1,38 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { StateProvider } from './hooks/state'
 import socketIO from "socket.io-client"
 import AskNickname from "./components/AskNickname"
 
 const App = () => {
+	/*--------------------------------------*/
+	/** * set reducer initial state values **/
+	/*--------------------------------------*/
 	const initialState = {
 		io: socketIO("http://localhost:3000"),
-		players: [],
+		totalPlayers: 0,
+		currentPlayer: localStorage.getItem('player') || null,
 		isPlayerWaiting: false,
 	}
 
+	/*----------------------------------*/
+	/** * define reducer state actions **/
+	/*----------------------------------*/
 	const reducer = (state, action) => {
 		switch (action.type) {
-			case 'setPlayers': return ({ ...state, players: action.players })
-			case 'setIsPlayerWaiting': return ({ ...state, isWaiting: action.isWaiting })
+			case 'setIo':
+				return ({ ...state, io: action.io })
+			case 'setTotalPlayers':
+				return ({ ...state, totalPlayers: action.totalPlayers })
+			case 'setIsPlayerWaiting':
+				return ({ ...state, isWaiting: action.isWaiting })
+			case 'setCurrentPlayer':
+				return ({ ...state, currentPlayer: action.currentPlayer })
 		}
 	}
 
+	/*---------------*/
+	/** * rendering **/
+	/*---------------*/
 	return (
 		<StateProvider initialState={initialState} reducer={reducer}>
 			<section className="hero is-fullheight is-light">

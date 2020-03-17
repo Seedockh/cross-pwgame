@@ -6,24 +6,27 @@ import MagicNumber from "./MagicNumber"
 const Dashboard = () => {
 	const [isGameSelected, setGameSelected] = useState(false)
 	const [selectedGame, setSelectedGame] = useState(null)
-	const [{ io }, dispatch] = useStateValue()
+	const [{ io, totalPlayers, currentPlayer }, dispatch] = useStateValue()
+
+	io.on('players::count', total => {
+		dispatch({ type: 'setTotalPlayers',	totalPlayers: total })
+	})
 
   const startMagicNumber = () => {
 		setGameSelected(true)
 		setSelectedGame(<MagicNumber io={io}/>)
 	}
+
   const startQuickWord = () => alert('Quick Word')
   const startWordAndFurious = () => alert('Word & Furious')
 
-	const resetGames = () => {
+	const logout = () => {
+		localStorage.removeItem('player')
+		console.log(currentPlayer)
+		dispatch({ type: 'setCurrentPlayer', currentPlayer: undefined })
+		console.log(currentPlayer)
 		setGameSelected(false)
 		setSelectedGame(null)
-		dispatch(
-			{type: 'setPlayers', players: []},
-			{type: 'setPlayerOne', playerOne: null},
-			{type: 'setPlayerTwo', playerTwo: null},
-		)
-		io.emit("close")
 	}
 
 	return (
@@ -59,6 +62,9 @@ const Dashboard = () => {
 								WordAndFurious
 							</button>
 						</li>
+						<a className="button is-large is-fullwidth is-danger" onClick={logout}>
+							Logout
+						</a>
 					</ul>
 				</>
 			}

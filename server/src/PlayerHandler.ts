@@ -1,5 +1,5 @@
-export default class PlayerHandler {
-	players: Array<Player>
+class PlayerHandler {
+	players: Array<Player> = []
 
 	/*----------------------------------------------------*/
 	/** * create a player and add it to handler instance **/
@@ -16,8 +16,9 @@ export default class PlayerHandler {
 	/** * get player if already exists **/
 	/*----------------------------------*/
 	getPlayer(id: string): Player | boolean {
-		return this.players.filter(player => player.socket.id === id).length === 1
-			? result[0]
-			: false
+		const player = this.players.filter(player => player.socket === id)
+		return player.length === 1 ? player[0] : false
 	}
 }
+
+export default Object.freeze(new PlayerHandler())

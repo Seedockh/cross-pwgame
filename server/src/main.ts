@@ -4,8 +4,8 @@ import { createServer } from 'http'
 import { config } from 'dotenv'
 config()
 
-import { GameHandlerInstance } from './GameHandler'
-import { PlayerHandlerInstance } from './PlayerHandler'
+import GameHandlerInstance from './GameHandler'
+import PlayerHandlerInstance from './PlayerHandler'
 
 /** @get_player_handler_singleton **/
 const playerHandler = PlayerHandlerInstance
@@ -28,17 +28,26 @@ app.get('/', (_, res) => {
 /*----------------------------------*/
 /** * listen to socket connections **/
 /*----------------------------------*/
-
 io.on('connection', (socket: Socket) => {
 	console.log('[CLIENT] Connection received :', socket.id)
 
-	/** @send_answer_to_client **/
+	/** @send_connection_answer_to_client **/
 	socket.emit('handshake')
 
-	socket.on('player::new', (param: unknown) => {
-		console.log('New player')
-		console.log(param)
+	/*-------------------------*/
+	/** * create a new player **/
+	/*-------------------------*/
+	socket.on('player::new', (player: Partial<Player>) => {
+		const newPlayer = playerHandler.createPlayer(player)
+		console.log(`[SERVER] New user created : ${newPlayer.nickname}`)
+
+		/** @send_newly_created_player_to_client **/
+		socket.emit('player::created', newPlayer)
+		/** @send_total_players_to_client **/
+		socket.emit('players::count', playerHandler.players.length)
 	})
+
+	socket.emit('players::count', playerHandler.players.length)
 })
 
 /*--------------------------*/
